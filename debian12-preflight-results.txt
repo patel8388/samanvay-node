@@ -1,0 +1,9 @@
+Environment: Ubuntu development sandbox, NOT Debian VPS
+Expected unresolved offline dependencies; no install attempted
+exit_code: 1
+Preflight: preparation only; no service, public bind, download, or automatic start.
+RAM: 24207 MiB total; this is not a measured memory-fit guarantee.
+Project disk free: 30319 MiB; keep space reserved for SQLite and OS.
+Python: /opt/manus/python/bin/python3.12 (Python 3.12.3)
+FAIL: offline wheelhouse absent: /workspace/samanvay-node/packaging/debian12/wheelhouse; provide compatible cryptography-50.0.2, cffi and pycparser wheels; no downloads or compilation attempted
+Preflight failed. No runtime changes made; resolve prerequisites first.

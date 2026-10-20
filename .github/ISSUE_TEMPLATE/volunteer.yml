@@ -1,0 +1,42 @@
+name: Volunteer contribution
+description: Tell us how you would like to help with the experimental prototype.
+title: "[Volunteer]: "
+labels:
+  - volunteer
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. This is unpaid volunteer collaboration unless separately agreed; there is no compensation, bounty, or financial promise. tSAMV has no value, redemption, or entitlement. Never share wallet/private keys, passwords, SSH credentials, or personal device identifiers.
+  - type: checkboxes
+    id: interests
+    attributes:
+      label: Areas of interest
+      options:
+        - label: Python implementation
+        - label: Tests or reproducibility
+        - label: Documentation or examples
+        - label: Network/difficulty design review (experienced reviewer; not a beginner implementation task)
+        - label: Independent security review
+        - label: Independent operator rehearsal using offline block-only exchange documentation
+      validations:
+        required: true
+  - type: textarea
+    id: experience
+    attributes:
+      label: Relevant experience
+      description: Briefly describe skills, prior protocol/testing/security work, or the contribution you have in mind. Do not include secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Proposed next step
+      description: Suggest a small, focused task or review. Operators should use disposable keys/databases and loopback-only transport; four independent operators are sought.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Development environment
+      description: Optional OS and Python version only; never provide device identifiers or credentials.

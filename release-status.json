@@ -1,0 +1,78 @@
+{
+  "debian12_bundle": {
+    "installed_on_vps": false,
+    "offline_dependencies_bundled": false,
+    "requires_python": "3.12+",
+    "ssh_access_used": false,
+    "status": "PREPARATION_ONLY_NOT_VPS_TESTED",
+    "target_disk_gib": 10,
+    "target_ram_gib": 1,
+    "target_vcpu": 1
+  },
+  "demo_blocks": 182,
+  "mainnet_enabled": false,
+  "new_cash_spent": false,
+  "node_tests_passed": 54,
+  "not_implemented": [
+    "qualified maintained upstream PoW base",
+    "difficulty adjustment",
+    "internet P2P",
+    "native mobile wallet",
+    "remote-miner pairing",
+    "sponsorship",
+    "funded faucet",
+    "grant/council custody controller",
+    "lifetime social identity enforcement",
+    "scalable pruning or authenticated claims",
+    "independent external security audit",
+    "volunteer internet operators and public soak"
+  ],
+  "operator_rehearsal": {
+    "all_states_equal": true,
+    "final_hash": "00237a8da293840b0d5a7fe9ab25f914097fd5f04d48674f55af027b85c55b9c",
+    "final_height": 8,
+    "fork_reorganizations": 2,
+    "independent_operators": 0,
+    "initial_heights": [
+      4,
+      6,
+      8,
+      0
+    ],
+    "local_node_processes": 4,
+    "new_blocks_per_node": [
+      14,
+      12,
+      10,
+      18
+    ],
+    "no_value": true,
+    "note": "One machine, four local processes; not independent-operator qualification.",
+    "public_endpoint_exposed": false,
+    "repeat_sync_idempotent": true,
+    "restart_replay_identical": true,
+    "result": "PASS",
+    "services_left_running": false,
+    "state_root": "2da14d608451118cf846990f78092641d011e7f0262f7ffb474853932c03e231",
+    "supply_conserved": true
+  },
+  "profiles": {
+    "devnet": {
+      "config_digest": "ce4c5b29d286a8911accdab69e1e39dc5d03546299415ae336696c98a00813d2",
+      "genesis_hash": "4245a507ed5b6b17e54141e924dd4816be5670826c8c7dafcfcc3a531acaf3d2",
+      "initial_state_root": "e0d39d610aab5b57bf2febcf967c581f46a7ef1c51fda7be0ebc7b5be848b321",
+      "network_id": "samanvay-local-devnet-v3"
+    },
+    "rules": {
+      "config_digest": "10ce372bdfe251a263e19fc250150ca3052c74a0b2eee3a640fc3ad9d6ef771c",
+      "genesis_hash": "2e0dcc59bc86c4b5c3c66508ff52328456a2c1a2918cb8c244b0aa2fe04f2907",
+      "initial_state_root": "fddbe6af059b2736d5681d138aa0f60a492ee25d9d8b02ed80e693cc4ce9751a",
+      "network_id": "samanvay-local-rules-v3"
+    }
+  },
+  "public_release_ready": false,
+  "reference_tests_passed": 27,
+  "services_left_running": false,
+  "status": "RUNNABLE_LOCAL_EXPERIMENT_ONLY",
+  "version": "0.1.0.dev0"
+}

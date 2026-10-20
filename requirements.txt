@@ -1,0 +1,2 @@
+# Already installed in the development environment; no paid services required.
+cryptography==50.0.2

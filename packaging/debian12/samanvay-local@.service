@@ -1,0 +1,15 @@
+[Unit]
+Description=Samanvay local node (manual, loopback-only)
+# This template is supplied disabled; do not enable it for unattended startup.
+
+[Service]
+Type=simple
+WorkingDirectory=%h/samanvay-node
+ExecStart=%h/samanvay-node/packaging/debian12/run-local.sh --db %h/.local/samanvay/%i.sqlite3
+Restart=no
+MemoryMax=384M
+TasksMax=16
+CPUQuota=50%
+
+[Install]
+# No WantedBy target: installation alone does not enable or start this unit.

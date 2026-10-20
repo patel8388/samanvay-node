@@ -1,0 +1,29 @@
+{
+  "all_states_equal": true,
+  "final_hash": "00237a8da293840b0d5a7fe9ab25f914097fd5f04d48674f55af027b85c55b9c",
+  "final_height": 8,
+  "fork_reorganizations": 2,
+  "independent_operators": 0,
+  "initial_heights": [
+    4,
+    6,
+    8,
+    0
+  ],
+  "local_node_processes": 4,
+  "new_blocks_per_node": [
+    14,
+    12,
+    10,
+    18
+  ],
+  "no_value": true,
+  "note": "One machine, four local processes; not independent-operator qualification.",
+  "public_endpoint_exposed": false,
+  "repeat_sync_idempotent": true,
+  "restart_replay_identical": true,
+  "result": "PASS",
+  "services_left_running": false,
+  "state_root": "2da14d608451118cf846990f78092641d011e7f0262f7ffb474853932c03e231",
+  "supply_conserved": true
+}

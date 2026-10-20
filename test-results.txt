@@ -1,0 +1,93 @@
+Python: 3.12.3
+cryptography: 50.0.2
+test_epoch_dust_remains_in_reward_pool (test_consensus.ConsensusRequiredBehavior.test_epoch_dust_remains_in_reward_pool) ... ok
+test_fees_nonminting_and_pending_miner_coinbase_maturity (test_consensus.ConsensusRequiredBehavior.test_fees_nonminting_and_pending_miner_coinbase_maturity) ... ok
+test_founder_vesting_and_bonus_are_delayed_and_mature (test_consensus.ConsensusRequiredBehavior.test_founder_vesting_and_bonus_are_delayed_and_mature) ... ok
+test_full_seven_active_and_seven_unbond_epochs_conservation (test_consensus.ConsensusRequiredBehavior.test_full_seven_active_and_seven_unbond_epochs_conservation) ... ok
+test_genesis_config_and_parent_state_linkage (test_consensus.ConsensusRequiredBehavior.test_genesis_config_and_parent_state_linkage) ... ok
+test_genesis_exact_65b_and_deterministic_root (test_consensus.ConsensusRequiredBehavior.test_genesis_exact_65b_and_deterministic_root) ... ok
+test_invalid_address_network_nonce_signature_schema_and_type (test_consensus.ConsensusRequiredBehavior.test_invalid_address_network_nonce_signature_schema_and_type) ... ok
+test_nested_budget_reference_and_random_vectors (test_consensus.ConsensusRequiredBehavior.test_nested_budget_reference_and_random_vectors) ... ok
+test_network_id_is_required_and_profile_replay_is_rejected (test_consensus.ConsensusRequiredBehavior.test_network_id_is_required_and_profile_replay_is_rejected) ... ok
+test_none_exit_and_early_claim_are_safe_rejections (test_consensus.ConsensusRequiredBehavior.test_none_exit_and_early_claim_are_safe_rejections) ... ok
+test_pow_uses_exact_target_and_work_is_target_based (test_consensus.ConsensusRequiredBehavior.test_pow_uses_exact_target_and_work_is_target_based) ... ok
+test_randomized_allocation_conservation_reference (test_consensus.ConsensusRequiredBehavior.test_randomized_allocation_conservation_reference) ... ok
+test_state_root_is_committed_in_header_and_tampering_fails (test_consensus.ConsensusRequiredBehavior.test_state_root_is_committed_in_header_and_tampering_fails) ... ok
+test_untrusted_skip_markers_are_rejected (test_consensus.ConsensusRequiredBehavior.test_untrusted_skip_markers_are_rejected) ... ok
+test_failed_reindex_rolls_back_earlier_cache_repairs (test_consensus_hardening.ConsensusHardeningTests.test_failed_reindex_rolls_back_earlier_cache_repairs) ... ok
+test_generator_transactions_cannot_be_dropped (test_consensus_hardening.ConsensusHardeningTests.test_generator_transactions_cannot_be_dropped) ... ok
+test_reindex_rejects_tampered_genesis_work (test_consensus_hardening.ConsensusHardeningTests.test_reindex_rejects_tampered_genesis_work) ... ok
+test_reindex_rejects_tampered_row_parent (test_consensus_hardening.ConsensusHardeningTests.test_reindex_rejects_tampered_row_parent) ... ok
+test_supplied_ancestors_must_end_at_parent (test_consensus_hardening.ConsensusHardeningTests.test_supplied_ancestors_must_end_at_parent) ... ok
+test_valid_generator_executes_signed_transfer (test_consensus_hardening.ConsensusHardeningTests.test_valid_generator_executes_signed_transfer) ... ok
+test_default_preflight_is_no_mutation_and_fails_closed_here_if_needed (test_debian_bundle.DebianBundleTests.test_default_preflight_is_no_mutation_and_fails_closed_here_if_needed) ... ok
+test_install_is_binary_only_and_does_not_build_project (test_debian_bundle.DebianBundleTests.test_install_is_binary_only_and_does_not_build_project) ... ok
+test_python311_only_preflight_fails_closed (test_debian_bundle.DebianBundleTests.test_python311_only_preflight_fails_closed) ... ok
+test_scripts_and_unit_are_conservative (test_debian_bundle.DebianBundleTests.test_scripts_and_unit_are_conservative) ... ok
+test_cli_keygen_init_mine_transfer_and_epoch_claim_syntax (test_integration.IntegrationTests.test_cli_keygen_init_mine_transfer_and_epoch_claim_syntax) ... ok
+test_http_surface_is_finite_json_and_rejects_non_loopback_peer (test_integration.IntegrationTests.test_http_surface_is_finite_json_and_rejects_non_loopback_peer) ... ok
+test_orphaned_fork_rolls_back_staking_state (test_integration.IntegrationTests.test_orphaned_fork_rolls_back_staking_state) ... ok
+test_partition_fork_converges_to_longer_cumulative_work (test_integration.IntegrationTests.test_partition_fork_converges_to_longer_cumulative_work) ... ok
+test_real_two_node_http_sync_transfers_mined_blocks (test_integration.IntegrationTests.test_real_two_node_http_sync_transfers_mined_blocks) ... ok
+test_restart_reindexes_tampered_cached_state (test_integration.IntegrationTests.test_restart_reindexes_tampered_cached_state) ... ok
+test_restart_rejects_corrupted_stored_block (test_integration.IntegrationTests.test_restart_rejects_corrupted_stored_block) ... ok
+test_duplicate_content_length_is_rejected_without_block_mutation (test_network_hardening.NetworkHardeningTests.test_duplicate_content_length_is_rejected_without_block_mutation) ... ok
+test_old_page_snapshot_is_not_reported_as_current_after_mutation (test_network_hardening.NetworkHardeningTests.test_old_page_snapshot_is_not_reported_as_current_after_mutation) ... ok
+test_peer_response_framing_rejects_duplicates_chunked_short_and_wrong_type (test_network_hardening.NetworkHardeningTests.test_peer_response_framing_rejects_duplicates_chunked_short_and_wrong_type) ... ok
+test_real_multipage_sync_verifies_complete_snapshot (test_network_hardening.NetworkHardeningTests.test_real_multipage_sync_verifies_complete_snapshot) ... ok
+test_sync_rejects_empty_final_page_instead_of_false_success (test_network_hardening.NetworkHardeningTests.test_sync_rejects_empty_final_page_instead_of_false_success) ... ok
+test_sync_rejects_false_tip_and_false_snapshot (test_network_hardening.NetworkHardeningTests.test_sync_rejects_false_tip_and_false_snapshot) ... ok
+test_sync_rejects_skipped_repeated_and_changed_pages (test_network_hardening.NetworkHardeningTests.test_sync_rejects_skipped_repeated_and_changed_pages) ... ok
+test_documented_source_run_cli_round_trip_and_repeat (test_offline_exchange.OfflineExchangeTests.test_documented_source_run_cli_round_trip_and_repeat) ... ok
+test_file_byte_bound_and_nonfinite_json (test_offline_exchange.OfflineExchangeTests.test_file_byte_bound_and_nonfinite_json) ... ok
+test_forks_export_deterministically_and_restart_preserves_state (test_offline_exchange.OfflineExchangeTests.test_forks_export_deterministically_and_restart_preserves_state) ... ok
+test_output_never_overwrites_and_strict_json_rejects_duplicates (test_offline_exchange.OfflineExchangeTests.test_output_never_overwrites_and_strict_json_rejects_duplicates) ... ok
+test_wrong_identity_and_tampering_are_rejected (test_offline_exchange.OfflineExchangeTests.test_wrong_identity_and_tampering_are_rejected) ... ok
+test_config_commitment_rejects_altered_genesis (test_runtime.RuntimeTests.test_config_commitment_rejects_altered_genesis) ... ok
+test_genesis_work_is_zero_and_replay_is_deterministic (test_runtime.RuntimeTests.test_genesis_work_is_zero_and_replay_is_deterministic) ... ok
+test_literal_loopback_peer_only (test_runtime.RuntimeTests.test_literal_loopback_peer_only) ... ok
+test_rejects_invalid_block_atomically (test_runtime.RuntimeTests.test_rejects_invalid_block_atomically) ... ok
+test_work_column_is_text_and_decimal (test_runtime.RuntimeTests.test_work_column_is_text_and_decimal) ... ok
+test_exact_envelope_and_boolean_header_fields_rejected (test_security.SecurityRegressionTests.test_exact_envelope_and_boolean_header_fields_rejected) ... ok
+test_founder_fixture_key_is_bound_to_vesting_address (test_security.SecurityRegressionTests.test_founder_fixture_key_is_bound_to_vesting_address) ... ok
+test_resigned_wrong_recipient_extra_fields_and_bool_amount (test_security.SecurityRegressionTests.test_resigned_wrong_recipient_extra_fields_and_bool_amount) ... ok
+test_same_height_state_injection_rejected (test_security.SecurityRegressionTests.test_same_height_state_injection_rejected) ... ok
+test_signed_profile_replay_is_rejected (test_security.SecurityRegressionTests.test_signed_profile_replay_is_rejected) ... ok
+test_two_staker_dust_is_funded_and_cannot_be_swept (test_security.SecurityRegressionTests.test_two_staker_dust_is_funded_and_cannot_be_swept) ... ok
+
+----------------------------------------------------------------------
+Ran 54 tests in 10.567s
+
+OK
+test_acceleration_does_not_claim_same_total (test_reference_rules.EconomicsTests.test_acceleration_does_not_claim_same_total) ... ok
+test_all_era_sizes_and_decimal_residues (test_reference_rules.EconomicsTests.test_all_era_sizes_and_decimal_residues) ... ok
+test_allocation_and_cap (test_reference_rules.EconomicsTests.test_allocation_and_cap) ... ok
+test_cumulative_against_naive (test_reference_rules.EconomicsTests.test_cumulative_against_naive) ... ok
+test_exhaustion (test_reference_rules.EconomicsTests.test_exhaustion) ... ok
+test_first_split (test_reference_rules.EconomicsTests.test_first_split) ... ok
+test_first_subsidy (test_reference_rules.EconomicsTests.test_first_subsidy) ... ok
+test_halving_boundary (test_reference_rules.EconomicsTests.test_halving_boundary) ... ok
+test_invalid_inputs (test_reference_rules.EconomicsTests.test_invalid_inputs) ... ok
+test_lifetime_exact (test_reference_rules.EconomicsTests.test_lifetime_exact) ... ok
+test_lifetime_split (test_reference_rules.EconomicsTests.test_lifetime_split) ... ok
+test_original_rounding_failure_regression (test_reference_rules.EconomicsTests.test_original_rounding_failure_regression) ... ok
+test_random_split_invariants (test_reference_rules.EconomicsTests.test_random_split_invariants) ... ok
+test_split_telescopes (test_reference_rules.EconomicsTests.test_split_telescopes) ... ok
+test_budget_matches_blocks (test_reference_rules.StakingArithmeticTests.test_budget_matches_blocks) ... ok
+test_claim_all_outputs_mature (test_reference_rules.StakingArithmeticTests.test_claim_all_outputs_mature) ... ok
+test_dust_not_redistributed (test_reference_rules.StakingArithmeticTests.test_dust_not_redistributed) ... ok
+test_empty_epoch_skips (test_reference_rules.StakingArithmeticTests.test_empty_epoch_skips) ... ok
+test_epoch_boundaries (test_reference_rules.StakingArithmeticTests.test_epoch_boundaries) ... ok
+test_late_exit (test_reference_rules.StakingArithmeticTests.test_late_exit) ... ok
+test_no_same_epoch_entry (test_reference_rules.StakingArithmeticTests.test_no_same_epoch_entry) ... ok
+test_order_independence (test_reference_rules.StakingArithmeticTests.test_order_independence) ... ok
+test_proportional_rounding (test_reference_rules.StakingArithmeticTests.test_proportional_rounding) ... ok
+test_random_pool_conservation (test_reference_rules.StakingArithmeticTests.test_random_pool_conservation) ... ok
+test_reject_bad_weights (test_reference_rules.StakingArithmeticTests.test_reject_bad_weights) ... ok
+test_seven_active_epochs (test_reference_rules.StakingArithmeticTests.test_seven_active_epochs) ... ok
+test_seven_unbond_epochs (test_reference_rules.StakingArithmeticTests.test_seven_unbond_epochs) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.035s
+
+OK

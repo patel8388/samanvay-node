@@ -1,0 +1,17 @@
+{
+  "header": {
+    "config_digest": "10ce372bdfe251a263e19fc250150ca3052c74a0b2eee3a640fc3ad9d6ef771c",
+    "height": 0,
+    "miner": "",
+    "network_id": "samanvay-local-rules-v3",
+    "nonce": 0,
+    "parent": "0000000000000000000000000000000000000000000000000000000000000000",
+    "state_root": "fddbe6af059b2736d5681d138aa0f60a492ee25d9d8b02ed80e693cc4ce9751a",
+    "target": 452312848583266388373324160190187140051835877600158453279131187530910662655,
+    "timestamp": 0,
+    "txids": [],
+    "version": 1
+  },
+  "state_root": "fddbe6af059b2736d5681d138aa0f60a492ee25d9d8b02ed80e693cc4ce9751a",
+  "transactions": []
+}

@@ -1,0 +1,16 @@
+{
+  "asset": "tSAMV \u2014 NO VALUE \u2014 NO REDEMPTION",
+  "cap_usamv": 10000000000000000,
+  "chainwork": 46592,
+  "claim_after_withdrawal_usamv": 1997716894,
+  "first_epoch_dust_usamv": 1,
+  "height": 182,
+  "issued_usamv": 6500296993911693,
+  "peer_states_equal": true,
+  "principal_withdrawn": true,
+  "profile": "samanvay-local-devnet-v3",
+  "supply_conserved": true,
+  "synced_new_blocks": 182,
+  "temporary_keys_and_databases_deleted_on_exit": true,
+  "tip_hash": "005d5f4d685e82df492debc946dda740d1b64e2d3e52a7e8db04394ace46bac9"
+}

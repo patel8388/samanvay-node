@@ -1,0 +1,12 @@
+{
+  "founder_address": "s3cfa96cfbce7d3e360adb93f4e072929e6cbf6a",
+  "founder_fixture_key_is_public": true,
+  "founder_unreleased_usamv": 3000000000000000,
+  "frozen_pool_balances_usamv": {
+    "s27775c83e203f87245d45b7b38555a8f9065744": 2000000000000000,
+    "s666c2695c3d12d2b5962c8da82a1abb1b4f05f5": 500000000000000,
+    "sd5181029555c859fa452d0f7baa6fd6ef0b5df0": 1000000000000000
+  },
+  "issued_usamv": 6500000000000000,
+  "no_value": true
+}
