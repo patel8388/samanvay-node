@@ -12,6 +12,8 @@ We are seeking Python contributors, protocol and security reviewers, and **four 
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md), choose a [help-wanted issue](https://github.com/patel8388/samanvay-node/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22help%20wanted%22), or [introduce your volunteer interest](https://github.com/patel8388/samanvay-node/issues/new?template=volunteer.yml). Documentation and reproducibility tasks are suitable entry points. Difficulty adjustment, public networking and consensus changes require experienced design review; removing the loopback guard is **not** a starter task.
 
+The human-driven [Paperclip coordination package](paperclip/samanvay-company/README.md) contains an importable project backlog; it has no agents, credentials, or automated execution settings.
+
 Read the [threat model](docs/THREAT_MODEL.md), [security reporting policy](SECURITY.md) and [private operator check](docs/PRIVATE_OPERATOR_CHECK.md) before testing. Source publication is not authorization to expose a node on the internet.
 
 ## Run it now
@@ -66,9 +68,22 @@ python3 -m samanvay --db .local/node-a.sqlite3 status
 
 This produces the lock at height 5, first eligible at height 13. The first eligible epoch ends at 24; its reward first becomes claimable at 27. These are accelerated test heights, not promised dates or APY. The demo covers the entire later exit/claim/withdraw flow automatically.
 
-`transfer`, `send`, `lock`, `exit`, `withdraw`, and `claim` **write signed transaction files**, not payments sent by a website. Explicitly include a file using `mine --tx signed.json`; transactions go only into the first block if `--count` is also supplied. There is no automatic mempool, transaction relay, wallet server or unattended miner. `submit --block block.json` accepts an already mined complete block. `claim` requires `--epoch`, `--lock-id`, and `--reward`; view exact entitlements in `status`. Use `python3 -m samanvay <command> --help` for each command.
+`transfer`, `send`, `lock`, `exit`, `withdraw`, and `claim` **write signed transaction files**, not payments sent by a website. Output JSON files are created owner-only and existing paths (including symlinks) are refused; choose a new path for each output. Explicitly include a file using `mine --tx signed.json`; transactions go only into the first block if `--count` is also supplied. There is no automatic mempool, transaction relay, wallet server or unattended miner. `submit --block block.json` accepts an already mined complete block. `claim` requires `--epoch`, `--lock-id`, and `--reward`; view exact entitlements in `status`. Use `python3 -m samanvay <command> --help` for each command.
 
-Wallet files are owner-only (`0600`) but **unencrypted plaintext test keys**. This is not production key custody or a mobile wallet. Anyone obtaining a file can spend its test funds. Key generation refuses to overwrite an existing wallet. The founder fixture key in source is deliberately public and must never be used for value.
+### Encrypted local-wallet milestone
+
+For an encrypted local test wallet, create a keystore and display its address:
+
+```bash
+python3 -m samanvay wallet create --out .local/wallet.json
+python3 -m samanvay address --key .local/wallet.json
+```
+
+The CLI prompts twice for a new passphrase (minimum 12 UTF-8 bytes), never accepts it as a command-line argument, and prompts again when the encrypted wallet is opened for signing. The new file uses a fixed Scrypt KDF profile and AES-256-GCM, is created with owner-only permissions (`0600`), and refuses to overwrite an existing file. Existing signing commands accept either this encrypted format or the old plaintext test-key file.
+
+This is **not audited production key custody or a mobile wallet**. The passphrase cannot be recovered; a copied keystore can be attacked offline; the host process can see decrypted key material while signing; and there is no hardware-backed storage, seed phrase, recovery service or mobile OS integration. The older `keygen` command intentionally remains a plaintext **disposable-test-only** workflow used by local examples. Do not put real assets or real wallet secrets into either format. See [wallet keystore notes](docs/WALLET_KEYSTORE.md).
+
+The founder fixture key in source is deliberately public and must never be used for value.
 
 ## Try two local nodes
 

@@ -1,5 +1,6 @@
 """Local command-line node. No background mining or public bind by default."""
 import argparse
+import getpass
 import json
 import sys
 from . import wallet, crypto, consensus
@@ -16,9 +17,7 @@ def _read(path):
 
 
 def _write(path, value):
-    with open(path, 'w', encoding='utf-8') as handle:
-        json.dump(value, handle, sort_keys=True, indent=2)
-        handle.write('\n')
+    wallet.write_json_new(path, value)
 
 
 def main(argv=None):
@@ -28,6 +27,10 @@ def main(argv=None):
     commands = parser.add_subparsers(dest='cmd', required=True)
     keygen = commands.add_parser('keygen')
     keygen.add_argument('--out', required=True)
+    wallet_parser = commands.add_parser('wallet')
+    wallet_commands = wallet_parser.add_subparsers(dest='wallet_action', required=True)
+    wallet_create = wallet_commands.add_parser('create', help='create a passphrase-encrypted local keystore')
+    wallet_create.add_argument('--out', required=True)
     address = commands.add_parser('address')
     address.add_argument('--key', required=True)
     for name in ('init', 'status'):
@@ -44,7 +47,7 @@ def main(argv=None):
         command.add_argument('--fee', type=int, default=0)
         command.add_argument('--expiry', type=int)
         command.add_argument('--nonce', type=int)
-        command.add_argument('--out', required=True, help='writes a signed transaction; does not broadcast')
+        command.add_argument('--out', required=True, help='creates an owner-only signed transaction file; refuses overwrite and does not broadcast')
         return command
 
     for name in ('transfer', 'send'):
@@ -78,8 +81,16 @@ def main(argv=None):
     if args.cmd == 'keygen':
         out(wallet.keygen(args.out))
         return 0
+    if args.cmd == 'wallet' and args.wallet_action == 'create':
+        passphrase = getpass.getpass('New wallet passphrase (12+ UTF-8 bytes): ')
+        confirmation = getpass.getpass('Confirm wallet passphrase: ')
+        if passphrase != confirmation:
+            raise ValueError('passphrases do not match')
+        out(wallet.create_encrypted(args.out, passphrase))
+        return 0
     if args.cmd == 'address':
-        account = wallet.account(args.key, 'tSAMV')
+        private = wallet.load_with_prompt(args.key, getpass.getpass)
+        account = wallet.account_from_private(private, 'tSAMV')
         out({'address': account['address'], 'public_key': account['public_key']})
         return 0
     chain = open_chain(args.db, args.profile)
@@ -99,7 +110,8 @@ def main(argv=None):
                 hashes.append(chain.mine(args.miner, transactions if index == 0 else (), timestamp=timestamp))
             out({'hash': hashes[-1], 'mined': len(hashes), 'height': chain.tip['height']})
         elif args.cmd in ('transfer', 'send', 'lock', 'exit', 'withdraw', 'claim'):
-            account = wallet.account(args.key, chain.config['network'])
+            private = wallet.load_with_prompt(args.key, getpass.getpass)
+            account = wallet.account_from_private(private, chain.config['network'])
             nonce = args.nonce if args.nonce is not None else chain.state()['nonces'].get(account['address'], 0)
             expiry = args.expiry if args.expiry is not None else chain.tip['height'] + chain.config['max_expiry']
             kind = 'transfer' if args.cmd == 'send' else args.cmd
@@ -112,14 +124,15 @@ def main(argv=None):
                 fields.update(lock_id=args.lock_id)
             else:
                 fields.update(lock_id=args.lock_id, reward=args.reward, epoch=args.epoch)
-            tx = wallet.build_signed(args.key, chain.config['network'], kind, nonce, expiry, args.fee, **fields)
+            tx = wallet.build_signed_from_private(private, chain.config['network'], kind, nonce, expiry, args.fee, **fields)
             _write(args.out, tx)
             out({'signed': args.out, 'txid': crypto.txid(tx), 'broadcast': False})
         elif args.cmd == 'build':
             _write(args.out, _read(args.json))
             out({'built': args.out, 'validated': False})
         elif args.cmd == 'sign':
-            _write(args.out, wallet.sign(_read(args.tx), args.key))
+            private = wallet.load_with_prompt(args.key, getpass.getpass)
+            _write(args.out, crypto.sign_transaction(_read(args.tx), private))
             out({'signed': args.out, 'broadcast': False})
         elif args.cmd == 'submit':
             out({'hash': chain.add_block(_read(args.block))})
