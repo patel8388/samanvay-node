@@ -2,12 +2,13 @@
 import ipaddress
 import json
 import re
+import tempfile
 import threading
 from urllib.parse import urlsplit, parse_qs
 from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from . import consensus, crypto
-from .chain import MAX_DAG_BLOCKS
+from .chain import MAX_DAG_BLOCKS, MAX_LOGICAL_DB_BYTES
 
 MAX_BODY = 2 * 1024 * 1024
 MAX_RESPONSE_BLOCKS = 128
@@ -233,47 +234,55 @@ def sync(chain, peer, timeout=3):
             not isinstance(tip_hash, str) or consensus.HASH.fullmatch(tip_hash) is None or
             not _decimal_text(tip_work)):
         raise ValueError('invalid peer status tip')
-    offset, accepted, snapshot, seen, received = 0, 0, None, set(), []
-    for _ in range(MAX_DAG_BLOCKS + 1):
-        path = '/blocks?offset=' + str(offset)
-        if snapshot is not None:
-            path += '&snapshot=' + snapshot
-        response = _get(url, path, timeout)
-        blocks = response.get('blocks')
-        page_snapshot = response.get('snapshot')
-        if (not isinstance(blocks, list) or not blocks or
-                len(blocks) > MAX_RESPONSE_BLOCKS or
-                not isinstance(page_snapshot, str) or consensus.HASH.fullmatch(page_snapshot) is None):
-            raise ValueError('peer block list bound')
-        if snapshot is None:
-            snapshot = page_snapshot
-        elif page_snapshot != snapshot:
-            raise ValueError('peer pagination snapshot changed')
-        if offset != len(received) or len(received) + len(blocks) > MAX_DAG_BLOCKS:
-            raise ValueError('invalid peer pagination offset')
-        for item in blocks:
-            if not isinstance(item, dict) or set(item) != {'block'}:
-                raise ValueError('peer block envelope')
-            digest = consensus.block_hash(item['block'])
-            if digest in seen:
-                raise ValueError('peer pagination repeated block')
-            seen.add(digest)
-            received.append(digest)
-            known = chain.get(digest) is not None
-            chain.add_block(item['block'])  # Invalid work never swallowed as a sync success.
-            accepted += not known
-        following = response.get('next_offset')
-        if following is None:
-            calculated = crypto.sha256d(('\n'.join(received)).encode('ascii'))
-            if calculated != snapshot:
-                raise ValueError('peer pagination snapshot mismatch')
-            advertised = chain.get(tip_hash)
-            if (advertised is None or advertised['height'] != tip_height or
-                    advertised['work'] != int(tip_work)):
-                raise ValueError('peer advertised tip unavailable')
-            return accepted
-        if (type(following) is not int or following != offset + len(blocks) or
-                not offset < following <= MAX_DAG_BLOCKS):
-            raise ValueError('invalid peer pagination progress')
-        offset = following
+    offset, snapshot, seen, received = 0, None, set(), []
+    with tempfile.TemporaryFile(mode='w+b') as staged:
+        staged_bytes = 0
+        for _ in range(MAX_DAG_BLOCKS + 1):
+            path = '/blocks?offset=' + str(offset)
+            if snapshot is not None:
+                path += '&snapshot=' + snapshot
+            response = _get(url, path, timeout)
+            blocks = response.get('blocks')
+            page_snapshot = response.get('snapshot')
+            if (not isinstance(blocks, list) or not blocks or
+                    len(blocks) > MAX_RESPONSE_BLOCKS or
+                    not isinstance(page_snapshot, str) or consensus.HASH.fullmatch(page_snapshot) is None):
+                raise ValueError('peer block list bound')
+            if snapshot is None:
+                snapshot = page_snapshot
+            elif page_snapshot != snapshot:
+                raise ValueError('peer pagination snapshot changed')
+            if offset != len(received) or len(received) + len(blocks) > MAX_DAG_BLOCKS:
+                raise ValueError('invalid peer pagination offset')
+            for item in blocks:
+                if not isinstance(item, dict) or set(item) != {'block'}:
+                    raise ValueError('peer block envelope')
+                block = item['block']
+                digest = consensus.block_hash(block)
+                if digest in seen:
+                    raise ValueError('peer pagination repeated block')
+                seen.add(digest)
+                received.append(digest)
+                encoded = crypto.canonical(block)
+                staged_bytes += len(encoded) + 1
+                if staged_bytes > MAX_LOGICAL_DB_BYTES:
+                    raise ValueError('peer sync staging byte limit')
+                staged.write(encoded + b'\n')
+            following = response.get('next_offset')
+            if following is None:
+                calculated = crypto.sha256d(('\n'.join(received)).encode('ascii'))
+                if calculated != snapshot:
+                    raise ValueError('peer pagination snapshot mismatch')
+
+                def staged_blocks():
+                    staged.seek(0)
+                    for line in staged:
+                        yield _strict_json(line)
+
+                return chain.add_blocks_atomic(
+                    staged_blocks(), expected_tip=(tip_hash, tip_height, int(tip_work)))
+            if (type(following) is not int or following != offset + len(blocks) or
+                    not offset < following <= MAX_DAG_BLOCKS):
+                raise ValueError('invalid peer pagination progress')
+            offset = following
     raise ValueError('sync batch limit')

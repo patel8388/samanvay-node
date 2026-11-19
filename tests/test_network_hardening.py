@@ -1,3 +1,4 @@
+import copy
 import json
 import socket
 import threading
@@ -151,6 +152,78 @@ class NetworkHardeningTests(unittest.TestCase):
             peer.shutdown()
             thread.join(timeout=2)
             peer.server_close()
+
+    def test_atomic_batch_rolls_back_valid_prefix_when_later_block_is_invalid(self):
+        source = Chain(Path(self.tmp.name) / 'source.sqlite3', params.default_config('devnet'))
+        try:
+            miner = 's' + '0' * 39
+            source.mine(miner)
+            first = source.blocks(limit=2)[1]['block']
+            source.mine(miner)
+            invalid = copy.deepcopy(source.tip['block'])
+            root = invalid['header']['state_root']
+            invalid_root = ('0' if root[0] != '0' else '1') + root[1:]
+            invalid['header']['state_root'] = invalid_root
+            invalid['state_root'] = invalid_root
+            invalid['header']['nonce'] = 0
+            while int(consensus.block_hash(invalid), 16) > self.chain.config['target']:
+                invalid['header']['nonce'] += 1
+
+            before_tip = self.chain.tip
+            before_state = copy.deepcopy(self.chain.state())
+            with self.assertRaises(ValueError):
+                self.chain.add_blocks_atomic([first, invalid])
+            self.assertEqual(self.chain.db.execute('SELECT COUNT(*) FROM blocks').fetchone()[0], 1)
+            self.assertEqual(self.chain.tip['hash'], before_tip['hash'])
+            self.assertEqual(self.chain.state(), before_state)
+        finally:
+            source.close()
+
+    def test_sync_late_page_failure_leaves_no_valid_prefix_imported(self):
+        source = Chain(Path(self.tmp.name) / 'source.sqlite3', params.default_config('devnet'))
+        try:
+            source.mine('s' + '0' * 39)
+            rows = source.blocks(limit=2)
+            hashes = [row['hash'] for row in rows]
+            snapshot = crypto.sha256d(('\n'.join(hashes)).encode('ascii'))
+            tip = source.tip
+            status = {**_identity(source), 'height': tip['height'], 'hash': tip['hash'],
+                      'work': str(tip['work']), 'network': 'tSAMV'}
+            first_page = {'blocks': [{'block': row['block']} for row in rows],
+                          'snapshot': snapshot, 'next_offset': len(rows)}
+            changed_page = {'blocks': [{'block': rows[-1]['block']}],
+                            'snapshot': 'f' * 64, 'next_offset': None}
+            before_state = copy.deepcopy(self.chain.state())
+            with patch('samanvay.server._get', side_effect=[status, first_page, changed_page]):
+                with self.assertRaises(ValueError):
+                    sync(self.chain, 'http://127.0.0.1:1234')
+            self.assertEqual(self.chain.db.execute('SELECT COUNT(*) FROM blocks').fetchone()[0], 1)
+            self.assertEqual(self.chain.tip['height'], 0)
+            self.assertEqual(self.chain.state(), before_state)
+        finally:
+            source.close()
+
+    def test_sync_false_advertised_tip_rolls_back_import(self):
+        source = Chain(Path(self.tmp.name) / 'source.sqlite3', params.default_config('devnet'))
+        try:
+            source.mine('s' + '0' * 39)
+            rows = source.blocks(limit=2)
+            hashes = [row['hash'] for row in rows]
+            snapshot = crypto.sha256d(('\n'.join(hashes)).encode('ascii'))
+            tip = source.tip
+            status = {**_identity(source), 'height': tip['height'], 'hash': 'f' * 64,
+                      'work': str(tip['work']), 'network': 'tSAMV'}
+            page = {'blocks': [{'block': row['block']} for row in rows],
+                    'snapshot': snapshot, 'next_offset': None}
+            before_state = copy.deepcopy(self.chain.state())
+            with patch('samanvay.server._get', side_effect=[status, page]):
+                with self.assertRaises(ValueError):
+                    sync(self.chain, 'http://127.0.0.1:1234')
+            self.assertEqual(self.chain.db.execute('SELECT COUNT(*) FROM blocks').fetchone()[0], 1)
+            self.assertEqual(self.chain.tip['height'], 0)
+            self.assertEqual(self.chain.state(), before_state)
+        finally:
+            source.close()
 
 
 if __name__ == "__main__":

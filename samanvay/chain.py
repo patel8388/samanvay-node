@@ -144,7 +144,7 @@ class Chain:
             self.db.rollback()
             raise
 
-    def add_block(self, block):
+    def _add_block_locked(self, block):
         if not isinstance(block, dict): raise ValueError("block must be object")
         raw = _j(block).encode()
         max_block = int(self.config.get("max_block_bytes", MAX_BLOCK_BYTES))
@@ -157,7 +157,7 @@ class Chain:
             if existing:
                 if existing['block'] != block:
                     raise ValueError('duplicate hash with altered block envelope')
-                return h
+                return h, False
             if self.db.execute("SELECT COUNT(*) FROM blocks").fetchone()[0] >= MAX_DAG_BLOCKS: raise ValueError("DAG block limit")
             parent_hash = block.get("header", {}).get("parent", "")
             parent = self.get(parent_hash)
@@ -169,14 +169,51 @@ class Chain:
             if logical + len(raw) + len(_j(state).encode()) > MAX_LOGICAL_DB_BYTES:
                 raise ValueError('local logical database byte limit')
             work = parent["work"] + int(consensus.block_work(block))
+            self.db.execute("INSERT INTO blocks VALUES(?,?,?,?,?,?,0)",
+                            (h, parent_hash, parent["height"]+1, str(work), _j(block), _j(state)))
+            return h, True
+
+    def add_block(self, block):
+        with self.lock:
             self.db.execute("BEGIN IMMEDIATE")
             try:
-                self.db.execute("INSERT INTO blocks VALUES(?,?,?,?,?,?,0)",(h, parent_hash, parent["height"]+1, str(work), _j(block), _j(state)))
-                self._select_main()
+                h, inserted = self._add_block_locked(block)
+                if inserted:
+                    self._select_main()
                 self.db.commit()
+                return h
             except Exception:
-                self.db.rollback(); raise
-            return h
+                self.db.rollback()
+                raise
+
+    def add_blocks_atomic(self, blocks, expected_tip=None):
+        """Import a bounded block batch atomically; expected_tip is (hash, height, work)."""
+        with self.lock:
+            self.db.execute("BEGIN IMMEDIATE")
+            try:
+                added = count = 0
+                for block in blocks:
+                    count += 1
+                    if count > MAX_DAG_BLOCKS:
+                        raise ValueError("block batch limit")
+                    _, inserted = self._add_block_locked(block)
+                    added += inserted
+                if added:
+                    self._select_main()
+                if expected_tip is not None:
+                    if (not isinstance(expected_tip, (tuple, list)) or len(expected_tip) != 3
+                            or not isinstance(expected_tip[0], str)
+                            or type(expected_tip[1]) is not int or type(expected_tip[2]) is not int):
+                        raise ValueError("invalid expected peer tip")
+                    tip = self.get(expected_tip[0])
+                    if (tip is None or tip["height"] != expected_tip[1]
+                            or tip["work"] != expected_tip[2]):
+                        raise ValueError("peer advertised tip unavailable")
+                self.db.commit()
+                return added
+            except Exception:
+                self.db.rollback()
+                raise
 
     def mine(self, miner, transactions=(), timestamp=None):
         with self.lock:
