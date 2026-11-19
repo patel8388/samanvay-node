@@ -8,9 +8,9 @@
   "issued_usamv": 6500296993911693,
   "peer_states_equal": true,
   "principal_withdrawn": true,
-  "profile": "samanvay-local-devnet-v3",
+  "profile": "samanvay-local-devnet-v4",
   "supply_conserved": true,
   "synced_new_blocks": 182,
   "temporary_keys_and_databases_deleted_on_exit": true,
-  "tip_hash": "005d5f4d685e82df492debc946dda740d1b64e2d3e52a7e8db04394ace46bac9"
+  "tip_hash": "00ac7ea428434b12651debb50f40a8b880b5cf1b830dd6053f91f02589c12bf7"
 }

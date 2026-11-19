@@ -42,14 +42,14 @@ python -m unittest discover -s . -p test_reference_rules.py -v
 Pop-Location
 ```
 
-The prototype pins `cryptography==50.0.2`. `./verify.sh` requires Bash and runs the unittest node suite and 27 reference tests. Native Windows compatibility is not yet qualified; report platform-specific failures rather than assuming the POSIX packaging helpers work there. The examples include `examples/local_demo.py` and `examples/operator_rehearsal.py`. Before reporting a result, record your OS, Python version, command, and whether the complete verification passed. The publication check passed 81 tests (54 node tests plus 27 reference tests); a four-process local rehearsal is separate evidence. An owner-reported VPS run is not independent operator validation.
+The prototype pins `cryptography==50.0.2`. `./verify.sh` requires Bash and runs the unittest node suite and 27 reference tests. Native Windows compatibility is not yet qualified; report platform-specific failures rather than assuming the POSIX packaging helpers work there. The examples include `examples/local_demo.py` and `examples/operator_rehearsal.py`. Before reporting a result, record your OS, Python version, command, and whether the complete verification passed. The latest recorded source verification totals are in `test-results.txt`; a four-process local rehearsal is separate evidence. An owner-reported VPS run is not independent operator validation.
 
 ## Safety boundaries
 
 - Use disposable keys, databases, and test data only.
 - Keep transport loopback-only; do not bind services to public interfaces or expose ports.
 - Do not send wallet/private keys, passwords, SSH credentials, or personal device identifiers in issues, logs, pull requests, or chat.
-- Do not present fixed easy-target behavior as production proof: there is currently no difficulty adjustment.
+- Do not present the bounded prototype retarget or its easy target ceiling as production proof; independent consensus and attack review are still needed.
 - Do not treat local or owner-reported runs as independent network evidence.
 
 ## Issues and pull requests

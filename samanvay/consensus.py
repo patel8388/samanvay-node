@@ -60,6 +60,7 @@ def initial_state(c):
             'restricted': {address: 'frozen-pool' for address in pools},
             'nonces': {}, 'locks': {}, 'rewards': {}, 'reward_pool': 0,
             'claims': {}, 'claim_owners': {}, 'fees': 0, 'skipped_epochs': [],
+            'difficulty_timestamps': [],
             'epoch_snapshot': None, 'config_digest': _digest(c)}
 
 
@@ -88,9 +89,44 @@ def _header_hash(header):
 
 def block_work(block):
     target = block['header'].get('target')
-    if type(target) is not int or not 0 <= target < (1 << 256):
+    if type(target) is not int or not 1 <= target < (1 << 256):
         raise ValueError('invalid target')
     return (1 << 256) // (target + 1)
+
+
+def _retarget_target(parent_target, elapsed, expected, pow_limit, factor):
+    """Apply one integer-only, factor-bounded retarget, capped at pow_limit."""
+    if type(pow_limit) is not int or not 1 <= pow_limit < (1 << 256):
+        raise ValueError('invalid difficulty retarget input')
+    if (type(parent_target) is not int or not 1 <= parent_target <= pow_limit
+            or type(elapsed) is not int or elapsed < 0
+            or type(expected) is not int or expected <= 0
+            or type(factor) is not int or factor < 2):
+        raise ValueError('invalid difficulty retarget input')
+    if elapsed * factor < expected:
+        target = parent_target // factor
+    elif elapsed > expected * factor:
+        target = parent_target * factor
+    else:
+        target = parent_target * elapsed // expected
+    return min(pow_limit, max(1, target))
+
+
+def _next_target(state, parent, c):
+    """Return the only valid target for the next height from committed state."""
+    parent_target = parent.get('header', {}).get('target')
+    if (type(parent_target) is not int or not 1 <= parent_target <= c['target']):
+        raise ValueError('invalid parent target')
+    height = state['height'] + 1
+    interval = c['retarget_interval']
+    if height <= interval or (height - 1) % interval:
+        return parent_target
+    timestamps = state['difficulty_timestamps']
+    if len(timestamps) != interval:
+        raise ValueError('difficulty window unavailable')
+    expected = c['target_spacing'] * (interval - 1)
+    return _retarget_target(parent_target, timestamps[-1] - timestamps[0],
+                            expected, c['target'], c['max_adjustment_factor'])
 
 
 def supply_total(state):
@@ -114,6 +150,13 @@ def _state_limits(state, c):
         raise ValueError('invalid balance')
     if state['reward_pool'] < 0 or state['unreleased_initial'] < 0:
         raise ValueError('negative reserve')
+    timestamps = state.get('difficulty_timestamps')
+    height = state.get('height')
+    expected_count = 0 if height == 0 else ((height - 1) % c['retarget_interval']) + 1
+    if (not isinstance(timestamps, list) or len(timestamps) != expected_count
+            or any(type(value) is not int or value < 0 for value in timestamps)
+            or any(timestamps[i] < timestamps[i - 1] for i in range(1, len(timestamps)))):
+        raise ValueError('invalid difficulty timestamp window')
 
 
 def _validate_tx(tx, c, height):
@@ -217,6 +260,9 @@ def _transition(state, block, c):
     ns = copy.deepcopy(state)
     height = block['header']['height']
     ns['height'] = height
+    if (height - 1) % c['retarget_interval'] == 0:
+        ns['difficulty_timestamps'] = []
+    ns['difficulty_timestamps'].append(block['header']['timestamp'])
     _release(ns, height, c)
     _snapshot(ns, height, c)  # Before transactions; no same-boundary front-running.
     fees, senders = 0, set()
@@ -316,7 +362,8 @@ def _validate_envelope(parent, state, block, c, ancestors):
     if (header['version'] != 1 or header['height'] != state['height'] + 1
             or header['height'] > c['max_blocks'] or header['parent'] != block_hash(parent)
             or header['network_id'] != c['network_id'] or header['config_digest'] != _digest(c)
-            or header['target'] != c['target'] or not 0 <= header['nonce'] < (1 << 64)
+            or header['target'] != _next_target(state, parent, c)
+            or not 0 <= header['nonce'] < (1 << 64)
             or not _address(header['miner'])):
         raise ValueError('header domain/parent/target/limits')
     txs = block['transactions']
@@ -358,7 +405,7 @@ def _validate_envelope(parent, state, block, c, ancestors):
 
 def apply_block(parent, state, block, c, ancestors=None):
     _validate_envelope(parent, state, block, c, ancestors)
-    if int(block_hash(block), 16) > c['target']:
+    if int(block_hash(block), 16) > block['header']['target']:
         raise ValueError('insufficient proof of work')
     result = _transition(state, block, c)
     if _root(result) != block['header']['state_root']:
@@ -378,13 +425,14 @@ def make_block(parent, state, transactions, miner_address, c, timestamp=None, an
     header = {'version': 1, 'height': state['height'] + 1, 'parent': block_hash(parent),
               'timestamp': timestamp, 'nonce': 0, 'miner': miner_address,
               'txids': [crypto.txid(tx) for tx in transactions], 'network_id': c['network_id'],
-              'target': c['target'], 'config_digest': _digest(c), 'state_root': '0' * 64}
+              'target': _next_target(state, parent, c),
+              'config_digest': _digest(c), 'state_root': '0' * 64}
     block = {'header': header, 'transactions': transactions, 'state_root': '0' * 64}
     _validate_envelope(parent, state, block, c, ancestors)
     root = _root(_transition(state, block, c))
     header['state_root'] = block['state_root'] = root
     for nonce in range(1_000_000):
         header['nonce'] = nonce
-        if int(block_hash(block), 16) <= c['target']:
+        if int(block_hash(block), 16) <= header['target']:
             return block
     raise ValueError('finite local mining attempt limit')

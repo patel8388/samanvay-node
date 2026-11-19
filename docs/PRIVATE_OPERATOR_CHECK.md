@@ -21,7 +21,7 @@ python3 -m samanvay --db .local/operator.sqlite3 init
 python3 -m samanvay address --key .local/operator.json
 ```
 
-Copy the displayed test address into the following command. Have different volunteers choose 4, 6, 8 and 10 blocks respectively so their disconnected branches differ. These are tiny, easy-target research runs, not hashpower benchmarks.
+Copy the displayed test address into the following command. Have different volunteers choose 4, 6, 8 and 10 blocks respectively so their disconnected branches differ. These are tiny, easy-starting-target research runs, not hashpower benchmarks; they do not reach a retarget boundary.
 
 ```bash
 python3 -m samanvay --db .local/operator.sqlite3 mine --miner TEST_ADDRESS --count 4
@@ -53,6 +53,6 @@ A successful round requires independent machines and operators, matching source 
 
 ## What remains blocked
 
-Offline success is not a public-testnet approval or a security audit. Reviewed difficulty adjustment, qualified architecture, hostile-input fuzzing, resource/exhaustion recovery, safe custody, and a later separately authorized network/soak phase remain outstanding. The fixed easy target is trivially rewriteable. Test balances have no value, redemption or mainnet entitlement.
+Offline success is not a public-testnet approval or a security audit. Independent review of the prototype difficulty adjustment, qualified architecture, hostile-input fuzzing, resource/exhaustion recovery, safe custody, and a later separately authorized network/soak phase remain outstanding. The deliberately easy starting-target ceiling is trivially rewriteable. Test balances have no value, redemption or mainnet entitlement.
 
 The owner must provide willing volunteers and agree on their private exchange channel before actual independent testing can be claimed. Do not expose this prototype publicly to make the volunteer step easier.

@@ -24,6 +24,14 @@ test_default_preflight_is_no_mutation_and_fails_closed_here_if_needed (test_debi
 test_install_is_binary_only_and_does_not_build_project (test_debian_bundle.DebianBundleTests.test_install_is_binary_only_and_does_not_build_project) ... ok
 test_python311_only_preflight_fails_closed (test_debian_bundle.DebianBundleTests.test_python311_only_preflight_fails_closed) ... ok
 test_scripts_and_unit_are_conservative (test_debian_bundle.DebianBundleTests.test_scripts_and_unit_are_conservative) ... ok
+test_bad_retarget_inputs_are_rejected (test_difficulty_adjustment.DifficultyAdjustmentTests.test_bad_retarget_inputs_are_rejected) ... ok
+test_block_target_is_derived_from_parent_state_and_cannot_be_overridden (test_difficulty_adjustment.DifficultyAdjustmentTests.test_block_target_is_derived_from_parent_state_and_cannot_be_overridden) ... ok
+test_branch_local_retarget_drives_cumulative_work_and_restart_replay (test_difficulty_adjustment.DifficultyAdjustmentTests.test_branch_local_retarget_drives_cumulative_work_and_restart_replay) ... ok
+test_completed_fast_window_adjusts_target_from_committed_timestamps (test_difficulty_adjustment.DifficultyAdjustmentTests.test_completed_fast_window_adjusts_target_from_committed_timestamps) ... ok
+test_first_full_window_keeps_target_and_resets_committed_history (test_difficulty_adjustment.DifficultyAdjustmentTests.test_first_full_window_keeps_target_and_resets_committed_history) ... ok
+test_profiles_pin_distinct_retarget_windows_and_replay_domains (test_difficulty_adjustment.DifficultyAdjustmentTests.test_profiles_pin_distinct_retarget_windows_and_replay_domains) ... ok
+test_retarget_has_factor_four_bounds_and_never_exceeds_pow_limit (test_difficulty_adjustment.DifficultyAdjustmentTests.test_retarget_has_factor_four_bounds_and_never_exceeds_pow_limit) ... ok
+test_window_shape_and_monotonicity_are_state_invariants (test_difficulty_adjustment.DifficultyAdjustmentTests.test_window_shape_and_monotonicity_are_state_invariants) ... ok
 test_cli_keygen_init_mine_transfer_and_epoch_claim_syntax (test_integration.IntegrationTests.test_cli_keygen_init_mine_transfer_and_epoch_claim_syntax) ... ok
 test_http_surface_is_finite_json_and_rejects_non_loopback_peer (test_integration.IntegrationTests.test_http_surface_is_finite_json_and_rejects_non_loopback_peer) ... ok
 test_orphaned_fork_rolls_back_staking_state (test_integration.IntegrationTests.test_orphaned_fork_rolls_back_staking_state) ... ok
@@ -31,10 +39,13 @@ test_partition_fork_converges_to_longer_cumulative_work (test_integration.Integr
 test_real_two_node_http_sync_transfers_mined_blocks (test_integration.IntegrationTests.test_real_two_node_http_sync_transfers_mined_blocks) ... ok
 test_restart_reindexes_tampered_cached_state (test_integration.IntegrationTests.test_restart_reindexes_tampered_cached_state) ... ok
 test_restart_rejects_corrupted_stored_block (test_integration.IntegrationTests.test_restart_rejects_corrupted_stored_block) ... ok
+test_atomic_batch_rolls_back_valid_prefix_when_later_block_is_invalid (test_network_hardening.NetworkHardeningTests.test_atomic_batch_rolls_back_valid_prefix_when_later_block_is_invalid) ... ok
 test_duplicate_content_length_is_rejected_without_block_mutation (test_network_hardening.NetworkHardeningTests.test_duplicate_content_length_is_rejected_without_block_mutation) ... ok
 test_old_page_snapshot_is_not_reported_as_current_after_mutation (test_network_hardening.NetworkHardeningTests.test_old_page_snapshot_is_not_reported_as_current_after_mutation) ... ok
 test_peer_response_framing_rejects_duplicates_chunked_short_and_wrong_type (test_network_hardening.NetworkHardeningTests.test_peer_response_framing_rejects_duplicates_chunked_short_and_wrong_type) ... ok
 test_real_multipage_sync_verifies_complete_snapshot (test_network_hardening.NetworkHardeningTests.test_real_multipage_sync_verifies_complete_snapshot) ... ok
+test_sync_false_advertised_tip_rolls_back_import (test_network_hardening.NetworkHardeningTests.test_sync_false_advertised_tip_rolls_back_import) ... ok
+test_sync_late_page_failure_leaves_no_valid_prefix_imported (test_network_hardening.NetworkHardeningTests.test_sync_late_page_failure_leaves_no_valid_prefix_imported) ... ok
 test_sync_rejects_empty_final_page_instead_of_false_success (test_network_hardening.NetworkHardeningTests.test_sync_rejects_empty_final_page_instead_of_false_success) ... ok
 test_sync_rejects_false_tip_and_false_snapshot (test_network_hardening.NetworkHardeningTests.test_sync_rejects_false_tip_and_false_snapshot) ... ok
 test_sync_rejects_skipped_repeated_and_changed_pages (test_network_hardening.NetworkHardeningTests.test_sync_rejects_skipped_repeated_and_changed_pages) ... ok
@@ -54,9 +65,23 @@ test_resigned_wrong_recipient_extra_fields_and_bool_amount (test_security.Securi
 test_same_height_state_injection_rejected (test_security.SecurityRegressionTests.test_same_height_state_injection_rejected) ... ok
 test_signed_profile_replay_is_rejected (test_security.SecurityRegressionTests.test_signed_profile_replay_is_rejected) ... ok
 test_two_staker_dust_is_funded_and_cannot_be_swept (test_security.SecurityRegressionTests.test_two_staker_dust_is_funded_and_cannot_be_swept) ... ok
+test_cli_create_address_and_signed_transaction_use_passphrase_prompts (test_wallet_keystore.WalletKeystoreTests.test_cli_create_address_and_signed_transaction_use_passphrase_prompts) ... ok
+test_cli_output_is_owner_only_no_overwrite_and_no_symlink (test_wallet_keystore.WalletKeystoreTests.test_cli_output_is_owner_only_no_overwrite_and_no_symlink) ... ok
+test_cli_passphrase_mismatch_does_not_create_file (test_wallet_keystore.WalletKeystoreTests.test_cli_passphrase_mismatch_does_not_create_file) ... ok
+test_encrypted_file_round_trip_and_address (test_wallet_keystore.WalletKeystoreTests.test_encrypted_file_round_trip_and_address) ... ok
+test_encrypted_wallet_signs_offline_transaction (test_wallet_keystore.WalletKeystoreTests.test_encrypted_wallet_signs_offline_transaction) ... ok
+test_failed_sync_does_not_publish_partial_wallet_or_output (test_wallet_keystore.WalletKeystoreTests.test_failed_sync_does_not_publish_partial_wallet_or_output) ... ok
+test_interactive_unlock_reads_one_validated_file (test_wallet_keystore.WalletKeystoreTests.test_interactive_unlock_reads_one_validated_file) ... ok
+test_legacy_plaintext_test_key_still_loads (test_wallet_keystore.WalletKeystoreTests.test_legacy_plaintext_test_key_still_loads) ... ok
+test_metadata_change_during_read_is_rejected (test_wallet_keystore.WalletKeystoreTests.test_metadata_change_during_read_is_rejected) ... ok
+test_owner_only_regular_file_checks (test_wallet_keystore.WalletKeystoreTests.test_owner_only_regular_file_checks) ... ok
+test_parameters_and_duplicate_json_fields_fail_closed (test_wallet_keystore.WalletKeystoreTests.test_parameters_and_duplicate_json_fields_fail_closed) ... ok
+test_passphrase_strength_and_no_overwrite (test_wallet_keystore.WalletKeystoreTests.test_passphrase_strength_and_no_overwrite) ... ok
+test_wallet_file_must_be_owned_by_current_user (test_wallet_keystore.WalletKeystoreTests.test_wallet_file_must_be_owned_by_current_user) ... ok
+test_wrong_passphrase_and_tampered_ciphertext_are_rejected (test_wallet_keystore.WalletKeystoreTests.test_wrong_passphrase_and_tampered_ciphertext_are_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 54 tests in 10.567s
+Ran 79 tests in 13.986s
 
 OK
 test_acceleration_does_not_claim_same_total (test_reference_rules.EconomicsTests.test_acceleration_does_not_claim_same_total) ... ok
@@ -88,6 +113,6 @@ test_seven_active_epochs (test_reference_rules.StakingArithmeticTests.test_seven
 test_seven_unbond_epochs (test_reference_rules.StakingArithmeticTests.test_seven_unbond_epochs) ... ok
 
 ----------------------------------------------------------------------
-Ran 27 tests in 0.035s
+Ran 27 tests in 0.033s
 
 OK

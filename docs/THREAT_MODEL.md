@@ -11,7 +11,7 @@ Every accepted block must preserve the configured supply ceiling, valid ownershi
 | Boundary | Threat | Current limit / review needed |
 | --- | --- | --- |
 | Block and transaction input | Forged signatures, replay, malformed types, oversized data and reward theft | Strict schemas and existing tests are not a proof of safety; add adversarial tests and bounded fuzzing. |
-| Chain selection | Outside hashpower rewriting history | Fixed easy target; no difficulty adjustment. Never use valuable assets. Review mining assumptions and timestamps before any networking expansion. |
+| Chain selection | Outside hashpower rewriting history | A bounded prototype retarget now limits changes to 4× per window and caps difficulty at an intentionally easy starting target, but has not had independent attack analysis. Timestamp influence, the easy floor and outside hashpower still make rewrites practical; never use valuable assets. |
 | Peer HTTP and offline bundles | Resource exhaustion, malicious pagination, divergent histories | HTTP stays loopback-only. Sync stages bounded pages and imports them in one SQLite transaction only after the full snapshot and advertised tip validate. Offline block imports remain untrusted, bounded inputs; use disposable environments. |
 | SQLite and cached state | Tampering, replay divergence, crash/reorg inconsistencies, disk exhaustion | Replay and fork tests exist. Independent resource, recovery and durability review remains necessary. |
 | Keys and signing | Local key theft or reuse with real assets | A new Scrypt/AES-GCM local test keystore is available, but it is unaudited, can be attacked offline, and exposes the key to the host process while signing. The legacy `keygen` format remains plaintext; the founder fixture key is public. Never use real assets or seeds, share wallet files or commit generated keys. |
@@ -28,4 +28,4 @@ Every accepted block must preserve the configured supply ceiling, valid ownershi
 
 ## Gates still open
 
-Independent architecture/security review, reviewed difficulty adjustment, hostile-input and resource testing, qualified bounded P2P, independent operators and separately authorized network/soak work are outstanding. Mobile custody, grant/council custody, sponsorship and a funded faucet are not implemented. See [RELEASE_GATES.md](RELEASE_GATES.md). Passing tests is neither an audit nor public-testnet approval.
+Independent architecture/security review and independent review of the prototype difficulty adjustment, hostile-input and resource testing, qualified bounded P2P, independent operators and separately authorized network/soak work are outstanding. Mobile custody, grant/council custody, sponsorship and a funded faucet are not implemented. See [RELEASE_GATES.md](RELEASE_GATES.md). Passing tests is neither an audit nor public-testnet approval.

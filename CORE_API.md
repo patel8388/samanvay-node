@@ -31,12 +31,14 @@ Founder principal releases zero through the cliff height, then `floor(3B * elaps
 
 | Setting | Local devnet | Rules-timing local profile |
 |---|---:|---:|
-| Network ID | samanvay-local-devnet-v3 | samanvay-local-rules-v3 |
+| Network ID | samanvay-local-devnet-v4 | samanvay-local-rules-v4 |
 | Epoch blocks | 12 | 720 |
 | Coinbase maturity | 3 | 100 |
 | Active / unbond epochs | 7 / 7 | 7 / 7 |
 | Founder cliff / linear period | 20 / 80 blocks | 262,800 / 1,051,200 blocks |
 | Founder bonus delay | 20 blocks | 262,800 blocks |
+| Target spacing / retarget interval | 1 second / 12 blocks | 600 seconds / 2,016 blocks |
+| Maximum target change per retarget | 4× easier or harder | 4× easier or harder |
 
 The rules-timing profile is not a public network. The bounded node is unsuitable for running a lifetime issuance/vesting simulation; arithmetic helpers test remote-era boundaries without mining millions of blocks. Block times are not guaranteed calendar durations.
 
@@ -73,9 +75,11 @@ Parameter helpers: `subsidy`, `cumulative`, `split`, `epoch_of`, `epoch_start`, 
 
 Header schema is exact: version, height, parent, timestamp, nonce, miner, txids, network_id, target, config_digest, state_root. State_root is committed inside the mined header and duplicated at block top level; both must agree. The supplied parent state must hash to its parent header commitment. No `_skip_*` or caller-controlled validation bypass is accepted.
 
-Both profiles use the same fixed EASY target `(2**248)-1`; work is `2**256//(target+1) = 256` per valid non-genesis block, not derived from how lucky its hash is. No DAA exists. Mining is real but this is not secure public mining. Timestamp rules require nondecreasing parent time, strictly greater than median of up to 11 prior branch headers, and no more than 7,200 seconds into the validating node's future. Default local mining advances timestamps for fast tests; accelerated miners eventually must wait for wall time.
+Both profiles start with the same deliberately easy proof-of-work limit `(2**248)-1`; the target can never become easier than that limit. The prototype retargets only after a complete window of mined blocks: for the next block after each window, it compares the first and last timestamps in the committed window with `(interval-1) * target_spacing`, scales the previous target by actual/expected elapsed time using integer floor arithmetic, limits each change to at most 4× easier or harder, and clamps the result to `[1, initial_target]`. The first window uses the initial target. Window timestamps live in committed chain state and reset at each window boundary. Each block's target is checked exactly, and chain choice remains valid cumulative target-derived work; staking weight and founder permission do not select blocks. This changes PoW target/work only: the existing issuance schedule, staking budget, reward accounting and 10B supply ceiling are unchanged. Timestamp rules still require nondecreasing parent time, strictly greater than the median of up to 11 prior branch headers, and no more than 7,200 seconds into the validating node's future. The one-second devnet spacing is only for accelerated local tests.
 
-The runtime always obtains median-time ancestors from the stored parent branch. Supplied ancestor lists in the low-level API must be connected and end at the claimed parent; the most recent 11 entries are used. Omitting context retains the low-level parent-only fallback for isolated transition tests, not a full-chain validation guarantee. Mining materializes transaction iterables once so generator-based callers cannot lose transactions between commitment and execution.
+This is a bounded implementation foundation, **not a reviewed production DAA**. The target is intentionally easy, the timestamp/retarget choices have not had independent consensus or attack analysis, the rules profile is still locally bounded, and modest hashpower can rewrite either profile. No public mining or valuable use is safe. The profile parameters and replay domains changed to v4; old v3 prototype databases do not match the new genesis/config and must not be reused.
+
+The runtime always obtains median-time ancestors from the stored parent branch. Supplied ancestor lists in the low-level API must be connected and end at the claimed parent; the most recent 11 entries are used. Omitting context retains the low-level parent-only fallback for isolated transition tests, not a full-chain validation guarantee. Difficulty history is separately carried in the committed parent state. Mining materializes transaction iterables once so generator-based callers cannot lose transactions between commitment and execution.
 
 ## Resource ceilings and limitations
 

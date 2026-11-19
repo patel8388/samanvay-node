@@ -13,12 +13,13 @@ def _i(x, minimum=0):
 def default_config(profile='devnet'):
     if profile not in ('devnet','rules'): raise ValueError('unknown profile')
     short = profile == 'devnet'
-    c = {'profile':profile, 'network':'tSAMV', 'network_id':('samanvay-local-devnet-v3' if short else 'samanvay-local-rules-v3'),
+    c = {'profile':profile, 'network':'tSAMV', 'network_id':('samanvay-local-devnet-v4' if short else 'samanvay-local-rules-v4'),
          'unit':UNIT,'cap':CAP,'initial':INITIAL,'reserve':RESERVE,'era_blocks':ERA_BLOCKS,
          'initial_subsidy':INITIAL_SUBSIDY,'epoch_blocks':12 if short else 720,'maturity':3 if short else 100,
          'active_epochs':7,'unbond_epochs':7,'vesting_cliff':20 if short else 262800,
          'vesting_period':80 if short else 1051200,'founder_bonus_maturity':20 if short else 262800,
-         'target':(1<<248)-1,
+         'target':(1<<248)-1,'target_spacing':1 if short else 600,
+         'retarget_interval':12 if short else 2016,'max_adjustment_factor':4,
          'max_block_bytes':1_000_000,'max_transactions':1000,'max_tx_bytes':100_000,
          'future_seconds':7200,'max_expiry':10000,'max_accounts':4096,'max_locks':512,
          'max_claims':4096,'max_epochs':1024,'max_blocks':10000,

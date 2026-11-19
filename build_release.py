@@ -52,7 +52,7 @@ def main():
                             'requires_python': '3.12+', 'offline_dependencies_bundled': False,
                             'target_vcpu': 1, 'target_ram_gib': 1, 'target_disk_gib': 10},
         'profiles': identities,
-        'not_implemented': ['qualified maintained upstream PoW base', 'difficulty adjustment',
+        'not_implemented': ['qualified maintained upstream PoW base', 'independent review of prototype difficulty adjustment',
             'internet P2P', 'native mobile wallet', 'remote-miner pairing', 'sponsorship',
             'funded faucet', 'grant/council custody controller', 'lifetime social identity enforcement',
             'scalable pruning or authenticated claims', 'independent external security audit',
@@ -60,7 +60,7 @@ def main():
     excluded_names = {'SHA256SUMS', 'CONTRACT.md'}
     def included(path):
         relative = path.relative_to(ROOT)
-        return (path.is_file() and not any(part in {'__pycache__', '.git', '.local', '.venv'} for part in relative.parts)
+        return (path.is_file() and not any(part in {'__pycache__', '.git', '.local', '.venv', '.pytest_cache'} for part in relative.parts)
                 and path.name not in excluded_names and path.suffix not in {'.pyc', '.db', '.key', '.sqlite3'}
                 and '-wal' not in path.name and '-shm' not in path.name)
     files = sorted(path for path in ROOT.rglob('*') if included(path))

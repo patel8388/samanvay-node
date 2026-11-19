@@ -2,7 +2,7 @@
 
 ## Scope and status
 
-Samanvay Node is an experimental Python 3.12 prototype. It has **not received an independent security audit**, is not mainnet software, and is not ready for a public testnet. Transport is intended to remain loopback-only; the current design uses a fixed easy target and has no difficulty adjustment. Do not run it on public interfaces or with valuable data.
+Samanvay Node is an experimental Python 3.12 prototype. It has **not received an independent security audit**, is not mainnet software, and is not ready for a public testnet. Transport is intended to remain loopback-only; the bounded timestamp-window retarget is experimental and unreviewed, and its starting target remains deliberately easy. Do not run it on public interfaces or with valuable data.
 
 The test token **tSAMV has no value, redemption, or entitlement**. There is no bounty, compensation, or guaranteed reward for reports.
 

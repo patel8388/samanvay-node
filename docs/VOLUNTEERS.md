@@ -5,7 +5,7 @@ Samanvay is an experimental Python 3.12 local node with SHA-256d mining, signed 
 ## People we need
 
 - **Python and test contributors:** reproducible setup, cross-platform reports, small documentation fixes, negative tests and bounded property/fuzz testing.
-- **Protocol reviewers:** evaluate missing difficulty adjustment, timestamp handling, cumulative-work chain choice, mining assumptions and rewarded-locking invariants before implementation changes.
+- **Protocol reviewers:** independently evaluate the bounded prototype difficulty adjustment, timestamp handling, cumulative-work chain choice, mining assumptions and rewarded-locking invariants.
 - **Network/security reviewers:** review a safe bounded transport design, resource ceilings, input validation and failure recovery. The current loopback guard must stay in place.
 - **Four independent volunteer operators:** run the documented [offline block-only check](PRIVATE_OPERATOR_CHECK.md) on separate existing machines. Four processes managed by one person are not four independent operators.
 
@@ -15,7 +15,7 @@ Start with [CONTRIBUTING.md](../CONTRIBUTING.md) and [open issues](https://githu
 
 ## Short invitation for community-approved sharing
 
-> Looking for volunteer Python contributors and experienced protocol/security reviewers for Samanvay, an experimental Python 3.12 no-value local blockchain prototype. Mining and rewarded token locking are implemented, but difficulty adjustment, public P2P and independent security/operator qualification remain missing. We have small documentation/reproducibility tasks plus bounded review tasks, and need four independent operators for offline block-only testing. No investment, valuable tokens, promised rewards or public-node deployment. Code and participation guide: https://github.com/patel8388/samanvay-node/blob/main/CONTRIBUTING.md
+> Looking for volunteer Python contributors and experienced protocol/security reviewers for Samanvay, an experimental Python 3.12 no-value local blockchain prototype. Mining, rewarded token locking and a bounded prototype difficulty adjustment are implemented, but independent consensus review, public P2P and operator qualification remain missing. We have small documentation/reproducibility tasks plus bounded review tasks, and need four independent operators for offline block-only testing. No investment, valuable tokens, promised rewards or public-node deployment. Code and participation guide: https://github.com/patel8388/samanvay-node/blob/main/CONTRIBUTING.md
 
 This is a draft invitation, not evidence that a community has accepted the project or that volunteers have joined. Ask permission where required; do not send unsolicited bulk messages or tag unrelated developers.
 

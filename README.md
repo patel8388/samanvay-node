@@ -107,7 +107,7 @@ Stop the foreground server with Ctrl+C. Nothing automatically starts a daemon. S
 
 - Own deterministic genesis, config commitments, separate local profile network IDs and signed replay domains.
 - Exact 6.5B initial allocation and 10B maximum; the unchanged finite reward arithmetic uses nested 60/30/10 buckets without negative shares or extra staking minting.
-- Real nonce/target SHA-256d mining; chain choice by valid cumulative target-derived work, never stake weight or founder permission.
+- Real nonce/target SHA-256d mining with a bounded, deterministic prototype difficulty retarget; chain choice by valid cumulative target-derived work, never stake weight or founder permission.
 - Ed25519 ownership checks, strict transaction/header schemas, integer-only amounts, nonce/expiry checks and committed state roots.
 - Coinbase maturity, founder cliff/linear release, delayed founder bonuses; frozen developer/treasury/distribution custody.
 - Native lock, next-epoch fixed weights, per-block restricted pool funding, empty-epoch skips, mature claims, exact dust backing, seven-active/seven-unbond exit and withdrawal.
@@ -117,7 +117,7 @@ Stop the foreground server with Ctrl+C. Nothing automatically starts a daemon. S
 
 ## Still missing before any public testnet
 
-**Do not expose this software publicly or assign value to it.** It has a fixed easy target and no difficulty adjustment; a tiny amount of outside hashpower can rewrite it. Account/address design, full-state copying/hashing, reward-state retention, transport, cryptography integration and resource ceilings need independent review. No mature upstream PoW codebase has been pinned or security-audited.
+**Do not expose this software publicly or assign value to it.** The new local DAA is an experimental bounded foundation, not an independently reviewed or attack-qualified mining protocol; its starting target remains deliberately easy, and outside hashpower can rewrite this chain. Account/address design, full-state copying/hashing, reward-state retention, transport, cryptography integration and resource ceilings need independent review. No mature upstream PoW codebase has been pinned or security-audited.
 
 Developer, treasury and distribution pools are deliberately frozen because reviewed independent council/grant custody is not implemented. That is not a working council, founder leadership system, faucet or grant-release feature. There is no founder master key or veto in consensus, but the lifetime leadership charter remains policy outside this code.
 

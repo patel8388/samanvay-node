@@ -7,7 +7,7 @@ priority: urgent
 
 # Specify and review consensus and difficulty adjustment
 
-Design the target production consensus rules for Bitcoin-style PoW mining and staking rewards. The existing prototype uses a fixed easy target and is trivially rewriteable; do not remove its loopback guard as a substitute for proper design.
+Design the target production consensus rules for Bitcoin-style PoW mining and staking rewards. The prototype now has an experimental bounded timestamp-window retarget, but it remains trivially rewriteable and is not independently reviewed or production-qualified; do not remove its loopback guard as a substitute for proper design.
 
 ## Acceptance criteria
 
