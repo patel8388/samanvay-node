@@ -175,26 +175,51 @@ def _make_keystore(private_key, passphrase):
 
 
 def _write_new(path, document):
-    p, directory_fd = _target_and_parent(path, create_parent=True)
     payload = (json.dumps(document, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
-    if len(payload) > MAX_FILE:
+    return _write_new_bytes(path, payload, max_size=MAX_FILE)
+
+
+def _write_new_bytes(path, payload, max_size=None):
+    p, directory_fd = _target_and_parent(path, create_parent=True)
+    if max_size is not None and len(payload) > max_size:
         os.close(directory_fd)
         raise ValueError("wallet file is too large")
+    temporary_name = None
     fd = None
     try:
-        fd = os.open(p.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC,
-                     0o600, dir_fd=directory_fd)
+        for _ in range(10):
+            temporary_name = ".samanvay-tmp-" + os.urandom(16).hex()
+            try:
+                fd = os.open(temporary_name,
+                             os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC,
+                             0o600, dir_fd=directory_fd)
+                break
+            except FileExistsError:
+                temporary_name = None
+        if fd is None:
+            raise FileExistsError(errno.EEXIST, "could not allocate a temporary wallet file")
         os.fchmod(fd, stat.S_IRUSR | stat.S_IWUSR)
         handle = os.fdopen(fd, "wb")
         fd = None
         with handle:
-            handle.write(payload)
+            written = handle.write(payload)
+            if written != len(payload):
+                raise OSError(errno.EIO, "incomplete wallet file write")
             handle.flush()
             os.fsync(handle.fileno())
+        os.link(temporary_name, p.name, src_dir_fd=directory_fd, dst_dir_fd=directory_fd,
+                follow_symlinks=False)
+        os.unlink(temporary_name, dir_fd=directory_fd)
+        temporary_name = None
         os.fsync(directory_fd)
     finally:
         if fd is not None:
             os.close(fd)
+        if temporary_name is not None:
+            try:
+                os.unlink(temporary_name, dir_fd=directory_fd)
+            except FileNotFoundError:
+                pass
         os.close(directory_fd)
     return p
 
@@ -202,24 +227,7 @@ def _write_new(path, document):
 def write_json_new(path, document):
     """Write a new owner-only JSON file without following or overwriting paths."""
     payload = (json.dumps(document, sort_keys=True, indent=2, allow_nan=False) + "\n").encode("utf-8")
-    p, directory_fd = _target_and_parent(path, create_parent=True)
-    fd = None
-    try:
-        fd = os.open(p.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC,
-                     0o600, dir_fd=directory_fd)
-        os.fchmod(fd, stat.S_IRUSR | stat.S_IWUSR)
-        handle = os.fdopen(fd, "wb")
-        fd = None
-        with handle:
-            handle.write(payload)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.fsync(directory_fd)
-    finally:
-        if fd is not None:
-            os.close(fd)
-        os.close(directory_fd)
-    return p
+    return _write_new_bytes(path, payload)
 
 
 def keygen(path):

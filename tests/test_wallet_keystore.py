@@ -70,6 +70,20 @@ class WalletKeystoreTests(unittest.TestCase):
             wallet.create_encrypted(self.keystore, PASSPHRASE)
         self.assertEqual(len(wallet.load(self.keystore, PASSPHRASE)), 64)
 
+    def test_failed_sync_does_not_publish_partial_wallet_or_output(self):
+        writers = (
+            ("interrupted-wallet.json", lambda path: wallet.create_encrypted(path, PASSPHRASE)),
+            ("interrupted-output.json", lambda path: wallet.write_json_new(path, {"ready": True})),
+        )
+        for name, writer in writers:
+            with self.subTest(name=name):
+                target = self.root / name
+                with patch("samanvay.wallet.os.fsync", side_effect=OSError("simulated sync failure")):
+                    with self.assertRaisesRegex(OSError, "simulated sync failure"):
+                        writer(target)
+                self.assertFalse(target.exists())
+                self.assertEqual(list(self.root.glob(".samanvay-tmp-*")), [])
+
     def test_owner_only_regular_file_checks(self):
         if os.name == "posix":
             self.assertEqual(stat.S_IMODE(self.keystore.stat().st_mode), 0o600)
